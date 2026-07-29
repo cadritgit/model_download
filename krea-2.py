@@ -22,8 +22,11 @@ download_tasks = [
         "file": "vae/qwen_image_vae.safetensors", 
         "dir": "/workspace/runpod-slim/ComfyUI/models/vae" 
     },
-
-
+    {
+        "repo": "conradlocke/krea2-identity-edit", # krea2-identity-edit Lora
+        "file": "krea2_identity_edit_v1_2.safetensors", 
+        "dir": "/workspace/runpod-slim/ComfyUI/models/loras" # 대문자 아님에 주의
+    },
 
 
 ]
