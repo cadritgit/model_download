@@ -14,12 +14,12 @@ download_tasks = [
     },
     {
         "repo": "Comfy-Org/MiniMax-H3", 
-        "file": "vae/minimax—h3_video_vae_fp16.safetensors",  # 비디오 VAE
+        "file": "vae/minimax_h3_video_vae_fp16.safetensors",  # 비디오 VAE
         "dir": "/workspace/runpod-slim/ComfyUI/models"
     },
     {
         "repo": "Comfy-Org/MiniMax-H3", 
-        "file": "vae/minimax—h3_audeo_vae_fp32.safetensors",   # 오디오 VAE
+        "file": "vae/minimax_h3_audio_vae_fp32.safetensors",   # 오디오 VAE
         "dir": "/workspace/runpod-slim/ComfyUI/models"
     }
 ]
