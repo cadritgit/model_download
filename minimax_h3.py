@@ -4,23 +4,23 @@ from huggingface_hub import hf_hub_download
 download_tasks = [
     {
         "repo": "Comfy-Org/MiniMax-H3", 
-        "file": "diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",  # 디퓨전 모델
-        "dir": "/workspace/runpod-slim/ComfyUI/models/diffusion_models"
+        "file": "resolve/main/diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",  # 디퓨전 모델
+        "dir": "runpod-slim/ComfyUI/models/diffusion_models"
     },
     {
         "repo": "Comfy-Org/MiniMax-H3", 
-        "file": "text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",  # 텍스트 인코더
-        "dir": "/workspace/runpod-slim/ComfyUI/models/text_encoders"
+        "file": "resolve/main/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",  # 텍스트 인코더
+        "dir": "runpod-slim/ComfyUI/models/text_encoders"
     },
     {
         "repo": "Comfy-Org/MiniMax-H3", 
-        "file": "vae/minimax—h3_video_vae_fp16.safetensors",  # 비디오 VAE
-        "dir": "/workspace/runpod-slim/ComfyUI/models/vae"
+        "file": "resolve/main/vae/minimax—h3_video_vae_fp16.safetensors",  # 비디오 VAE
+        "dir": "runpod-slim/ComfyUI/models/vae"
     },
     {
         "repo": "Comfy-Org/MiniMax-H3", 
-        "file": "vae/minimax—h3_audeo_vae_fp32.safetensors",   # 오디오 VAE
-        "dir": "/workspace/runpod-slim/ComfyUI/models/vae"
+        "file": "resolve/main/vae/minimax—h3_audeo_vae_fp32.safetensors",   # 오디오 VAE
+        "dir": "runpod-slim/ComfyUI/models/vae"
     }
 ]
 
