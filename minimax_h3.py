@@ -22,6 +22,7 @@ download_tasks = [
         "file": "vae/minimax_h3_audio_vae_fp32.safetensors",   # 오디오 VAE
         "dir": "/workspace/runpod-slim/ComfyUI/models"
     },
+    {
         "repo": "larryvrh/MiniMax-H3-Turbo-Lora",
         "file": "minimax_turvo_v4_step600_ema.saferensors",  # 터보 Lora
         "dir": "/workspace/runpod-slim/ComfyUI/models/loras"
