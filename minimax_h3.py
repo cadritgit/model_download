@@ -21,7 +21,10 @@ download_tasks = [
         "repo": "Comfy-Org/MiniMax-H3", 
         "file": "vae/minimax_h3_audio_vae_fp32.safetensors",   # 오디오 VAE
         "dir": "/workspace/runpod-slim/ComfyUI/models"
-    }
+    },
+        "repo": "larryvrh/MiniMax-H3-Turbo-Lora",
+        "file": "minimax_turvo_v4_step600_ema.saferensors",  # 터보 Lora
+        "dir": "/workspace/runpod-slim/ComfyUI/models/loras"
 ]
 
 # 2. 반복문으로 각기 다른 설정을 적용해 다운로드
