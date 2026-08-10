@@ -24,7 +24,7 @@ download_tasks = [
     },
     {
         "repo": "larryvrh/MiniMax-H3-Turbo-Lora",
-        "file": "minimax_turvo_v4_step600_ema.saferensors",  # 터보 Lora
+        "file": "minimax_h3_turvo_v4_step600_ema.safetensors",  # 터보 Lora
         "dir": "/workspace/runpod-slim/ComfyUI/models/loras"
     }
 ]
