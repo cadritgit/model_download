@@ -25,6 +25,7 @@ download_tasks = [
         "repo": "larryvrh/MiniMax-H3-Turbo-Lora",
         "file": "minimax_turvo_v4_step600_ema.saferensors",  # 터보 Lora
         "dir": "/workspace/runpod-slim/ComfyUI/models/loras"
+    }
 ]
 
 # 2. 반복문으로 각기 다른 설정을 적용해 다운로드
