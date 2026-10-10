@@ -26,7 +26,7 @@ fi
 
 cd "$REPO_DIR"
 printf '[2/4] Installing Python download dependencies...\n'
-python3 -m pip install huggingface_hub gdown
+python3 -m pip install -U huggingface_hub hf_xet gdown
 
 printf '[3/4] Downloading MiniMax H3 video models and LoRAs...\n'
 python3 minimax_h3.py
