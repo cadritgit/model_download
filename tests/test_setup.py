@@ -40,11 +40,11 @@ class SetupTests(unittest.TestCase):
         return subprocess.run(['git', *args], check=True, capture_output=True, text=True)
 
     def run_setup(self):
-        self.assertTrue((REPO / 'setup.sh').exists(), 'setup.sh has not been implemented')
-        text = (REPO / 'setup.sh').read_text()
+        self.assertTrue((REPO / 'setup_minimax_h3.sh').exists(), 'setup_minimax_h3.sh has not been implemented')
+        text = (REPO / 'setup_minimax_h3.sh').read_text()
         text = text.replace('/workspace/runpod-slim', str(self.base))
         text = text.replace('https://github.com/cadritgit/model_download.git', str(self.origin))
-        script = self.root / 'setup.sh'
+        script = self.root / 'setup_minimax_h3.sh'
         script.write_text(text)
         return subprocess.run(['bash', str(script)], env=self.env,
                               capture_output=True, text=True)
@@ -56,7 +56,7 @@ class SetupTests(unittest.TestCase):
         result = self.run_setup()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue((self.base / 'model_download/.git').exists())
-        self.assertEqual(self.calls(), ['-m pip install huggingface_hub gdown',
+        self.assertEqual(self.calls(), ['-m pip install -U huggingface_hub hf_xet gdown',
                                        'minimax_h3.py', 'minimax_h3_image.py'])
 
     def test_missing_comfyui_stops_before_install_or_download(self):
