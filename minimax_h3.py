@@ -3,6 +3,13 @@ import subprocess
 
 # 1. Hugging Face 모델 다운로드
 download_tasks = [
+    # 원본 H3는 유지하고 Singularity v1.3 Pruned INT8을 별도로 추가합니다.
+    # 모델 다운로드만 추가하며 워크플로우/LoRA 설정은 변경하지 않습니다.
+    {
+        "repo": "WarmBloodAban/Minimax-h3_Singularity",
+        "file": "Minimax-h3_Singularity_ref2va_Pruned_v1.3_int8.safetensors",
+        "dir": "/workspace/runpod-slim/ComfyUI/models/diffusion_models"
+    },
     {
         "repo": "Comfy-Org/MiniMax-H3", 
         "file": "diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
