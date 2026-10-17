@@ -34,8 +34,9 @@ class QwenDownloadTests(unittest.TestCase):
         download = Mock()
         fake_hub = types.ModuleType('huggingface_hub')
         fake_hub.hf_hub_download = download
-        with tempfile.TemporaryDirectory() as tmp, patch.dict(sys.modules, {'huggingface_hub': fake_hub}):
+        with tempfile.TemporaryDirectory() as tmp, patch.dict(sys.modules, {'huggingface_hub': fake_hub}), patch.object(module, 'download_drive_lora') as drive:
             self.assertEqual(module.main(['--precision', 'int8', '--comfyui-dir', tmp]), 0)
+            drive.assert_called_once_with(Path(tmp) / 'models')
             self.assertEqual(download.call_count, 5)
             calls = [call.kwargs for call in download.call_args_list]
             self.assertEqual([c['filename'] for c in calls], [

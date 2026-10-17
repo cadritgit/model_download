@@ -15,6 +15,44 @@ REPO_ID = 'Comfy-Org/Qwen-Image-2.1'
 # Pin the verified repository snapshot for reproducible downloads.
 REVISION = 'a8342359c61979b06a8dafb1a47991fe1f30e994'
 DEFAULT_COMFYUI_DIR = '/workspace/runpod-slim/ComfyUI'
+DRIVE_URL = 'https://drive.google.com/uc?export=download&id=1Wu-smpFKbJ7iVIXQDF3mP9lC75QDy8aD'
+DRIVE_FILENAME = 'NSFW Qwen by TheseAlpacas V2.safetensors'
+DRIVE_SIZE = 79744352
+DRIVE_SHA256 = '83aba822ad8ee10a1e836828f5088259d93bce7b5f3419b46dbc0258c2be46a9'
+
+
+def download_drive_lora(models_dir):
+    """Download the verified Drive snapshot; never replace a file on failure."""
+    import hashlib
+    import tempfile
+    import urllib.request
+
+    target = models_dir / 'loras' / DRIVE_FILENAME
+    if target.is_file() and target.stat().st_size == DRIVE_SIZE:
+        with target.open('rb') as source:
+            if hashlib.file_digest(source, 'sha256').hexdigest() == DRIVE_SHA256:
+                print(f'Already verified: {target}')
+                return
+    target.parent.mkdir(parents=True, exist_ok=True)
+    partial = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=target.parent, suffix='.part', delete=False) as output:
+            partial = Path(output.name)
+            digest = hashlib.sha256()
+            size = 0
+            with urllib.request.urlopen(DRIVE_URL, timeout=60) as response:
+                while chunk := response.read(1024 * 1024):
+                    size += len(chunk)
+                    if size > DRIVE_SIZE:
+                        raise ValueError('Drive file size changed')
+                    digest.update(chunk)
+                    output.write(chunk)
+        if size != DRIVE_SIZE or digest.hexdigest() != DRIVE_SHA256:
+            raise ValueError('Drive checksum mismatch; check sharing/quota or changed file')
+        partial.replace(target)
+    finally:
+        if partial is not None:
+            partial.unlink(missing_ok=True)
 
 
 def main(argv=None):
@@ -39,6 +77,7 @@ def main(argv=None):
                   'qwen-image-2.1-consistency.safetensors', models_dir / 'loras'))
     for repo, revision, filename, destination in tasks:
         print(f'{repo}/{filename} -> {destination / filename}')
+    print(f'{DRIVE_URL} -> {models_dir / "loras" / DRIVE_FILENAME}')
     if args.dry_run:
         return 0
     try:
@@ -49,6 +88,7 @@ def main(argv=None):
         for repo, revision, filename, destination in tasks:
             hf_hub_download(repo_id=repo, filename=filename,
                             revision=revision, local_dir=str(destination))
+        download_drive_lora(models_dir)
     except Exception as exc:
         parser.exit(1, f'다운로드 실패: {type(exc).__name__}. 연결/디스크/접근 권한을 확인하고 재실행하세요.\n')
     print('Qwen-Image 2.1 모델 다운로드 완료!')
