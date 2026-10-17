@@ -20,6 +20,8 @@ class QwenDownloadTests(unittest.TestCase):
             self.assertIn('text_encoders/qwen3vl_8b_int8_convrot.safetensors', result.stdout)
             self.assertIn('vae/qwen_image_2.1_vae_bf16.safetensors', result.stdout)
             self.assertFalse(target.exists())
+            self.assertIn('loras/qwen_image_2.1_turbo_lora_avg_rank_178_bf16.safetensors', result.stdout)
+            self.assertIn('loras/qwen-image-2.1-consistency.safetensors', result.stdout)
 
     def test_int8_download_uses_pinned_revision_and_correct_layout(self):
         import sys
@@ -34,17 +36,22 @@ class QwenDownloadTests(unittest.TestCase):
         fake_hub.hf_hub_download = download
         with tempfile.TemporaryDirectory() as tmp, patch.dict(sys.modules, {'huggingface_hub': fake_hub}):
             self.assertEqual(module.main(['--precision', 'int8', '--comfyui-dir', tmp]), 0)
-            self.assertEqual(download.call_count, 3)
+            self.assertEqual(download.call_count, 5)
             calls = [call.kwargs for call in download.call_args_list]
             self.assertEqual([c['filename'] for c in calls], [
                 'diffusion_models/qwen_image_2.1_int8_convrot.safetensors',
                 'text_encoders/qwen3vl_8b_int8_convrot.safetensors',
                 'vae/qwen_image_2.1_vae_bf16.safetensors',
+                'loras/qwen_image_2.1_turbo_lora_avg_rank_178_bf16.safetensors',
+                'qwen-image-2.1-consistency.safetensors',
             ])
-            for call in calls:
+            for call in calls[:4]:
                 self.assertEqual(call['repo_id'], 'Comfy-Org/Qwen-Image-2.1')
                 self.assertEqual(call['revision'], module.REVISION)
                 self.assertEqual(call['local_dir'], str(Path(tmp) / 'models'))
+            self.assertEqual(calls[4]['repo_id'], 'ausboss/Qwen-Image-2.1-Consistency-LoRA')
+            self.assertEqual(calls[4]['revision'], '1b58c4406925d6ec5fa9abd2d080531030f7cc0d')
+            self.assertEqual(calls[4]['local_dir'], str(Path(tmp) / 'models' / 'loras'))
             download.side_effect = OSError('network unavailable')
             with self.assertRaises(SystemExit) as failure:
                 module.main(['--comfyui-dir', tmp])

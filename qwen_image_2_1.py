@@ -29,10 +29,16 @@ def main(argv=None):
         f'diffusion_models/qwen_image_2.1_{suffix}.safetensors',
         f'text_encoders/qwen3vl_8b_{suffix}.safetensors',
         'vae/qwen_image_2.1_vae_bf16.safetensors',
+        'loras/qwen_image_2.1_turbo_lora_avg_rank_178_bf16.safetensors',
     ]
     models_dir = args.comfyui_dir.expanduser() / 'models'
-    for filename in files:
-        print(f'{REPO_ID}/{filename} -> {models_dir / filename}')
+    tasks = [(REPO_ID, REVISION, filename, models_dir) for filename in files]
+    # Creator-recommended step 1500; download only, never auto-apply LoRAs.
+    tasks.append(('ausboss/Qwen-Image-2.1-Consistency-LoRA',
+                  '1b58c4406925d6ec5fa9abd2d080531030f7cc0d',
+                  'qwen-image-2.1-consistency.safetensors', models_dir / 'loras'))
+    for repo, revision, filename, destination in tasks:
+        print(f'{repo}/{filename} -> {destination / filename}')
     if args.dry_run:
         return 0
     try:
@@ -40,9 +46,9 @@ def main(argv=None):
     except ImportError:
         parser.exit(1, 'huggingface_hub 필요: python -m pip install -U huggingface_hub\n')
     try:
-        for filename in files:
-            hf_hub_download(repo_id=REPO_ID, filename=filename,
-                            revision=REVISION, local_dir=str(models_dir))
+        for repo, revision, filename, destination in tasks:
+            hf_hub_download(repo_id=repo, filename=filename,
+                            revision=revision, local_dir=str(destination))
     except Exception as exc:
         parser.exit(1, f'다운로드 실패: {type(exc).__name__}. 연결/디스크/접근 권한을 확인하고 재실행하세요.\n')
     print('Qwen-Image 2.1 모델 다운로드 완료!')
