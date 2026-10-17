@@ -6,7 +6,7 @@ SCRIPT = Path(__file__).resolve().parents[1] / 'qwen_image_2_1.py'
 
 
 class QwenDownloadTests(unittest.TestCase):
-    def test_default_dry_run_lists_three_bf16_files_without_writes(self):
+    def test_default_dry_run_lists_official_int8_files_without_writes(self):
         import subprocess
         import tempfile
         with tempfile.TemporaryDirectory() as tmp:
@@ -16,8 +16,8 @@ class QwenDownloadTests(unittest.TestCase):
                 capture_output=True, text=True,
             )
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertIn('diffusion_models/qwen_image_2.1_bf16.safetensors', result.stdout)
-            self.assertIn('text_encoders/qwen3vl_8b_bf16.safetensors', result.stdout)
+            self.assertIn('diffusion_models/qwen_image_2.1_int8_convrot.safetensors', result.stdout)
+            self.assertIn('text_encoders/qwen3vl_8b_int8_convrot.safetensors', result.stdout)
             self.assertIn('vae/qwen_image_2.1_vae_bf16.safetensors', result.stdout)
             self.assertFalse(target.exists())
 

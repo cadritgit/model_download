@@ -21,8 +21,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--comfyui-dir', type=Path, default=Path(DEFAULT_COMFYUI_DIR))
     parser.add_argument('--dry-run', action='store_true', help='List files without downloading or creating folders')
-    parser.add_argument('--precision', choices=('bf16', 'int8'), default='bf16',
-                        help='BF16 quality default, or smaller INT8 diffusion model and encoder')
+    parser.add_argument('--precision', choices=('bf16', 'int8'), default='int8',
+                        help='INT8 ConvRot official workflow default; BF16 is optional')
     args = parser.parse_args(argv)
     suffix = 'bf16' if args.precision == 'bf16' else 'int8_convrot'
     files = [
