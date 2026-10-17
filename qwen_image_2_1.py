@@ -1,6 +1,6 @@
 """Download official Qwen-Image 2.1 weights for ComfyUI (generation and editing).
 
-Install in the target environment: python -m pip install -U huggingface_hub
+Install in the target environment: python -m pip install -U huggingface_hub gdown
 Run: python qwen_image_2_1.py
 Preview: python qwen_image_2_1.py --dry-run
 Source: https://huggingface.co/Comfy-Org/Qwen-Image-2.1
@@ -24,8 +24,10 @@ DRIVE_SHA256 = '83aba822ad8ee10a1e836828f5088259d93bce7b5f3419b46dbc0258c2be46a9
 def download_drive_lora(models_dir):
     """Download the verified Drive snapshot; never replace a file on failure."""
     import hashlib
-    import tempfile
-    import urllib.request
+    try:
+        import gdown
+    except ImportError as exc:
+        raise RuntimeError('gdown 필요: python -m pip install -U gdown') from exc
 
     target = models_dir / 'loras' / DRIVE_FILENAME
     if target.is_file() and target.stat().st_size == DRIVE_SIZE:
@@ -34,25 +36,18 @@ def download_drive_lora(models_dir):
                 print(f'Already verified: {target}')
                 return
     target.parent.mkdir(parents=True, exist_ok=True)
-    partial = None
-    try:
-        with tempfile.NamedTemporaryFile(dir=target.parent, suffix='.part', delete=False) as output:
-            partial = Path(output.name)
-            digest = hashlib.sha256()
-            size = 0
-            with urllib.request.urlopen(DRIVE_URL, timeout=60) as response:
-                while chunk := response.read(1024 * 1024):
-                    size += len(chunk)
-                    if size > DRIVE_SIZE:
-                        raise ValueError('Drive file size changed')
-                    digest.update(chunk)
-                    output.write(chunk)
-        if size != DRIVE_SIZE or digest.hexdigest() != DRIVE_SHA256:
-            raise ValueError('Drive checksum mismatch; check sharing/quota or changed file')
-        partial.replace(target)
-    finally:
-        if partial is not None:
-            partial.unlink(missing_ok=True)
+    partial = Path(str(target) + '.part')
+    result = gdown.download(url=DRIVE_URL, output=str(partial), quiet=False,
+                            resume=True, use_cookies=False)
+    if result is None:
+        raise RuntimeError('Google Drive download failed; check sharing/quota')
+    with partial.open('rb') as source:
+        valid = (partial.stat().st_size == DRIVE_SIZE and
+                 hashlib.file_digest(source, 'sha256').hexdigest() == DRIVE_SHA256)
+    if not valid:
+        partial.unlink(missing_ok=True)
+        raise ValueError('Drive checksum mismatch; check sharing/quota or changed file')
+    partial.replace(target)
 
 
 def main(argv=None):
@@ -83,7 +78,7 @@ def main(argv=None):
     try:
         from huggingface_hub import hf_hub_download
     except ImportError:
-        parser.exit(1, 'huggingface_hub 필요: python -m pip install -U huggingface_hub\n')
+        parser.exit(1, 'huggingface_hub 필요: python -m pip install -U huggingface_hub gdown\n')
     try:
         for repo, revision, filename, destination in tasks:
             hf_hub_download(repo_id=repo, filename=filename,

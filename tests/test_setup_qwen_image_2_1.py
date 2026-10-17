@@ -21,14 +21,14 @@ class QwenSetupTests(test_setup.SetupTests):
         result = self.run_setup()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue((self.base / 'model_download/.git').exists())
-        self.assertEqual(self.calls(), ['-m pip install -U huggingface_hub hf_xet',
+        self.assertEqual(self.calls(), ['-m pip install -U huggingface_hub hf_xet gdown',
                                        'qwen_image_2_1.py'])
         # Re-running uses fast-forward pull and still succeeds.
         result = self.run_setup()
         self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_install_failure_stops_before_download(self):
-        self.env['FAIL_CALL'] = '-m pip install -U huggingface_hub hf_xet'
+        self.env['FAIL_CALL'] = '-m pip install -U huggingface_hub hf_xet gdown'
         result = self.run_setup()
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(self.calls(), [self.env['FAIL_CALL']])

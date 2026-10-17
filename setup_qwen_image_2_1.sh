@@ -26,7 +26,7 @@ fi
 
 cd "$REPO_DIR"
 printf '[2/3] Installing Python download dependencies...\n'
-python3 -m pip install -U huggingface_hub hf_xet
+python3 -m pip install -U huggingface_hub hf_xet gdown
 
 printf '[3/3] Downloading Qwen Image 2.1 official default models...\n'
 python3 qwen_image_2_1.py
